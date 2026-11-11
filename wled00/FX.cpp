@@ -3989,7 +3989,8 @@ void mode_tetrix(void) {
         drop->pos   = SEGLEN;             // start at end of segment (no need to subtract 1)
         if (!SEGMENT.check1) drop->col = hw_random8(0,15)<<4;   // limit color choices so there is enough HUE gap
         drop->step  = 1;                  // drop state (0 init, 1 forming, 2 falling)
-        drop->brick = (SEGMENT.intensity ? (SEGMENT.intensity>>5)+1 : hw_random8(1,5)) * (1+(SEGLEN>>6));  // size of brick
+        if (SEGMENT.check2) drop->brick = 1 + (SEGMENT.intensity >> 3); // exact width: 1 to 32 pixels, independent of SEGLEN
+        else drop->brick = (SEGMENT.intensity ? (SEGMENT.intensity>>5)+1 : hw_random8(1,5)) * (1+(SEGLEN>>6));  // size of brick
       }
 
       if (drop->step == 1) {              // forming
@@ -4030,7 +4031,7 @@ void mode_tetrix(void) {
   for (unsigned stripNr=0; stripNr<strips; stripNr++)
     virtualStrip::runStrip(stripNr, &drops[stripNr]);
 }
-static const char _data_FX_MODE_TETRIX[] PROGMEM = "Tetrix@!,Width,,,,One color;!,!;!;;sx=0,ix=0,pal=11,m12=1";
+static const char _data_FX_MODE_TETRIX[] PROGMEM = "Tetrix@!,Width,,,,One color,Exact width;!,!;!;;sx=0,ix=0,pal=11,m12=1";
 
 
 /*
